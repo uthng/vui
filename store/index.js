@@ -86,9 +86,11 @@ export const actions = {
 
   logout({ commit }) {
     jsCookie.remove("iui_vtok")
+    jsCookie.remove("iui_vtok_expiration")
     jsCookie.remove("iui_user")
 
     commit(SET_VTOK, "")
+    commit(SET_VTOK_EXPIRATION, 0)
     commit(SET_USER, "")
   },
 

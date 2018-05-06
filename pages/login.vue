@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-tabs
         slot="extension"
-        color="pink darken-1"
+        color="blue darken-3"
       >
         <v-tabs-slider color="grey lighten-1"/>
         <v-tab>LDAP</v-tab>
@@ -28,8 +28,8 @@
                 min="8"
               />
               <v-card-actions>
-                <v-btn flat color="pink">Cancel</v-btn>
-                <v-btn flat color="pink" @click.stop="doLogin()">Login</v-btn>
+                <v-btn flat color="blue">Cancel</v-btn>
+                <v-btn flat color="blue" @click.stop="doLoginLdap()">Login</v-btn>
               </v-card-actions>
             </v-card-text>
           </v-card>
@@ -45,8 +45,8 @@
               />
             </v-card-text>
             <v-card-actions>
-              <v-btn flat color="pink">Cancel</v-btn>
-              <v-btn flat color="pink">Save</v-btn>
+              <v-btn flat color="blue">Cancel</v-btn>
+              <v-btn flat color="blue" @click.stop="doLoginToken()">Save</v-btn>
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-// import _ from 'lodash'
+import _ from "lodash"
 import Loader from "~/components/loader/loader.vue"
 
 export default {
@@ -74,7 +74,7 @@ export default {
     }
   },
   methods: {
-    doLogin: async function() {
+    doLoginLdap: async function() {
       try {
         this.dlgLoading = true
         let ret = await this.$vault.ldap.login(this.userLogin, this.userPass)
@@ -82,6 +82,27 @@ export default {
         this.$store.dispatch("setUser", this.userLogin)
 
         this.showMsg({ message: "You are successfully logged in !" })
+        this.$router.push("/")
+        this.dlogLoading = false
+      } catch (error) {
+        this.showMsg({ type: "error", message: error })
+        this.dlgLoading = false
+      }
+    },
+    doLoginToken: async function() {
+      try {
+        this.dlgLoading = true
+        // Call get token to verify if it is token root or special ones
+        let infos = await this.$vault.token.getTokenInfos(this.vaultToken)
+        this.$store.dispatch("setVtok", this.vaultToken)
+        if (!_.isNil(infos)) {
+          this.$store.dispatch(
+            "setUser",
+            infos.username === "N/A" ? infos.display_name : infos.username
+          )
+        }
+
+        this.showMsg({ message: "Your token has been saved correctly !" })
         this.$router.push("/")
         this.dlogLoading = false
       } catch (error) {
