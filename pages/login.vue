@@ -93,12 +93,14 @@ export default {
       try {
         this.dlgLoading = true
         // Call get token to verify if it is token root or special ones
-        let infos = await this.$vault.token.getTokenInfos(this.vaultToken)
+        let infos = await this.$vault.token.lookupSelf(this.vaultToken)
         this.$store.dispatch("setVtok", this.vaultToken)
-        if (!_.isNil(infos)) {
+        if (!_.isNil(infos.data)) {
           this.$store.dispatch(
             "setUser",
-            infos.username === "N/A" ? infos.display_name : infos.username
+            _.isNil(infos.data.meta)
+              ? infos.data.display_name
+              : infos.data.meta.username
           )
         }
 
