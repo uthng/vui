@@ -3,33 +3,32 @@
     <v-layout row align-baseline justify-center align-center>
       <v-flex xs6 fill-height>
         <v-card>
-          <v-card-title primary-title class="pink lighten-1">
+          <v-card-title primary-title class="blue darken-3">
             <div class="headline">Token</div>
           </v-card-title>
           <v-divider/>
           <v-list dense>
             <v-list-tile>
-              <v-list-tile-content class="body-1">User:</v-list-tile-content>
-              <v-list-tile-content class="align-end body-1">{{ tokenInfos.username }}</v-list-tile-content>
+              <div class="body-1"><b>User:</b> <span class="ml-3">{{ tokenInfos.username }}</span></div>
             </v-list-tile>
             <v-list-tile>
-              <v-list-tile-content class="body-1">Path:</v-list-tile-content>
-              <v-list-tile-content class="align-end body-1">{{ tokenInfos.path }}</v-list-tile-content>
+              <div class="body-1"><b>Display name:</b> <span class="ml-3">{{ tokenInfos.display_name }}</span></div>
             </v-list-tile>
             <v-list-tile>
-              <v-list-tile-content class="body-1">Token:</v-list-tile-content>
-              <v-list-tile-content class="align-end body-1">{{ this.$store.state.vtok }}</v-list-tile-content>
+              <div class="body-1"><b>Path:</b> <span class="ml-3">{{ tokenInfos.path }}</span></div>
             </v-list-tile>
             <v-list-tile>
-              <v-list-tile-content class="body-1">Expire:</v-list-tile-content>
-              <v-list-tile-content class="align-end body-1">{{ tokenInfos.expire }}</v-list-tile-content>
+              <div class="body-1"><b>Token:</b> <span class="ml-3">{{ this.$store.state.vtok }}</span></div>
+            </v-list-tile>
+            <v-list-tile>
+              <div class="body-1"><b>Expire:</b> <span class="ml-3">{{ tokenInfos.expire }}</span></div>
             </v-list-tile>
           </v-list>
         </v-card>
       </v-flex>
       <v-flex xs6 fill-height>
         <v-card>
-          <v-card-title primary-title class="pink lighten-1" >
+          <v-card-title primary-title class="blue darken-3" >
             <div class="headline">Policies</div>
           </v-card-title>
           <v-divider/>
@@ -44,7 +43,7 @@
     <v-layout row align-baseline justify-center align-center>
       <v-flex xs12 fill-height>
         <v-card>
-          <v-card-title primary-title class="pink lighten-1">
+          <v-card-title primary-title class="blue darken-3">
             <div class="headline">Permissions</div>
           </v-card-title>
           <v-divider/>
