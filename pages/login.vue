@@ -78,8 +78,15 @@ export default {
       try {
         this.dlgLoading = true
         let ret = await this.$vault.ldap.login(this.userLogin, this.userPass)
-        this.$store.dispatch("setVtok", ret.auth.client_token)
-        this.$store.dispatch("setUser", this.userLogin)
+
+        this.$store.dispatch("setVtok", {
+          token: ret.auth.client_token,
+          ttl: ret.auth.lease_duration
+        })
+        this.$store.dispatch("setUser", {
+          user: this.userLogin,
+          ttl: ret.auth.lease_duration
+        })
 
         this.showMsg({ message: "You are successfully logged in !" })
         this.$router.push("/")
