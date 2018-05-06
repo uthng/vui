@@ -3,7 +3,7 @@
     <v-dialog :value="value" persistent fullscreen content-class="dialog-loading" @input="$emit('input', $event.target.value)">
       <v-container fill-height>
         <v-layout column justify-center align-center>
-          <v-progress-circular :size="150" :width="10" indeterminate color="pink"/>
+          <v-progress-circular :size="size" :width="width" :color="color" indeterminate />
           <div class="my-5 title">{{ text }}</div>
         </v-layout>
       </v-container>
@@ -24,6 +24,18 @@ export default {
     text: {
       default: "Loading...",
       type: String
+    },
+    color: {
+      default: "white",
+      type: String
+    },
+    width: {
+      default: 10,
+      type: Number
+    },
+    size: {
+      default: 150,
+      type: Number
     }
   },
   data() {
