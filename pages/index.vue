@@ -63,7 +63,7 @@
       </v-flex>
     </v-layout>
 
-    <loader v-model="dlgLoading"/>
+    <loader v-model="dlgLoading" color="blue"/>
   </v-container>
 </template>
 
