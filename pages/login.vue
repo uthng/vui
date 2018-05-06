@@ -101,14 +101,17 @@ export default {
         this.dlgLoading = true
         // Call get token to verify if it is token root or special ones
         let infos = await this.$vault.token.lookupSelf(this.vaultToken)
-        this.$store.dispatch("setVtok", this.vaultToken)
+        this.$store.dispatch("setVtok", {
+          token: this.vaultToken,
+          ttl: infos.data.creation_ttl
+        })
         if (!_.isNil(infos.data)) {
-          this.$store.dispatch(
-            "setUser",
-            _.isNil(infos.data.meta)
+          this.$store.dispatch("setUser", {
+            user: _.isNil(infos.data.meta)
               ? infos.data.display_name
-              : infos.data.meta.username
-          )
+              : infos.data.meta.username,
+            ttl: infos.data.creation_ttl
+          })
         }
 
         this.showMsg({ message: "Your token has been saved correctly !" })
