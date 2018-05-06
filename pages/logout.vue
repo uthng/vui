@@ -28,7 +28,6 @@ export default {
   mounted: async function() {
     try {
       let infos = await this.$vault.token.lookupSelf(this.$store.state.vtok)
-      console.log(infos)
       // Only revoke token it self if it isnt token root
       //  or it has an expiration time
       if (

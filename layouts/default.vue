@@ -141,9 +141,18 @@ export default {
       try {
         this.loadingText = "Renewing token..."
         this.dlgLoading = true
-        let token = await this.$vault.token.renewSelf(this.$store.state.vtok)
 
-        this.$store.dispatch("setVtok", token.auth.client_token)
+        let infos = await this.$vault.token.lookupSelf(this.$store.state.vtok)
+        // Only renew token itself if it isnt token root
+        //  or it has an expiration time
+        if (
+          infos.data.display_name !== "root" ||
+          !_.isNil(infos.data.expire_time)
+        ) {
+          await this.$vault.token.renewSelf(this.$store.state.vtok)
+        }
+
+        this.$store.dispatch("setVtok", this.$store.state.vtok)
         this.showMsg({
           message: "Your current Vault token has been renew successfully !"
         })
