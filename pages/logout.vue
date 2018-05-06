@@ -19,15 +19,24 @@
 </template>
 
 <script>
-// import _ from 'lodash'
+import _ from "lodash"
 
 export default {
   data() {
     return {}
   },
-  mounted: function() {
+  mounted: async function() {
     try {
-      this.$vault.token.revokeSelf(this.$store.state.vtok)
+      let infos = await this.$vault.token.lookupSelf(this.$store.state.vtok)
+      console.log(infos)
+      // Only revoke token it self if it isnt token root
+      //  or it has an expiration time
+      if (
+        infos.data.display_name !== "root" ||
+        !_.isNil(infos.data.expire_time)
+      ) {
+        this.$vault.token.revokeSelf(this.$store.state.vtok)
+      }
       this.$store.dispatch("logout")
       this.showMsg({ message: "You are logged out now ! See you soon !" })
     } catch (err) {
