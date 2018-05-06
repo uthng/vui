@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import _ from "lodash"
 import Loader from "~/components/loader/loader.vue"
 
 export default {
