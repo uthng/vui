@@ -68,20 +68,32 @@ export const actions = {
   setVtok({ commit }, data) {
     // Set cookie expiration time to 15mins
     var inFifteenMinutes = new Date(new Date().getTime() + 15 * 60 * 1000)
+    var ttl = inFifteenMinutes
 
-    jsCookie.set("iui_vtok", data, { expires: inFifteenMinutes, secure: false })
-    jsCookie.set("iui_vtok_expiration", inFifteenMinutes.getTime(), {
-      expires: inFifteenMinutes,
+    if (data.ttl > 0) {
+      ttl = new Date(new Date().getTime() + ttl * 1000)
+    }
+
+    jsCookie.set("iui_vtok", data.token, { expires: ttl, secure: false })
+    jsCookie.set("iui_vtok_expiration", ttl.getTime(), {
+      expires: ttl,
       secure: false
     })
 
-    commit(SET_VTOK, data)
-    commit(SET_VTOK_EXPIRATION, inFifteenMinutes.getTime())
+    commit(SET_VTOK, data.token)
+    commit(SET_VTOK_EXPIRATION, ttl.getTime())
   },
 
   setUser({ commit }, data) {
-    jsCookie.set("iui_user", data, { expires: 1 / 96, secure: false })
-    commit(SET_USER, data)
+    var inFifteenMinutes = new Date(new Date().getTime() + 15 * 60 * 1000)
+    var ttl = inFifteenMinutes
+
+    if (data.ttl > 0) {
+      ttl = new Date(new Date().getTime() + ttl * 1000)
+    }
+
+    jsCookie.set("iui_user", data.user, { expires: ttl, secure: false })
+    commit(SET_USER, data.user)
   },
 
   logout({ commit }) {
