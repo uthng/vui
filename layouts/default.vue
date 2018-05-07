@@ -128,6 +128,14 @@ export default {
           active: false,
           visible: true,
           items: [{ title: "Key/Value", visible: true, href: "/kv" }]
+        },
+        {
+          action: "apps",
+          title: "Policies",
+          active: true,
+          visible: true,
+          href: "/policy",
+          items: []
         }
       ]
       return items
@@ -153,7 +161,15 @@ export default {
           await this.$vault.token.renewSelf(this.$store.state.vtok)
         }
 
-        this.$store.dispatch("setVtok", this.$store.state.vtok)
+        this.$store.dispatch("setVtok", {
+          token: this.$store.state.vtok,
+          ttl: infos.data.creation_ttl
+        })
+        this.$store.dispatch("setUser", {
+          user: this.$store.state.user,
+          ttl: infos.data.creation_ttl
+        })
+
         this.showMsg({
           message: "Your current Vault token has been renew successfully !"
         })

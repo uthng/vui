@@ -7,6 +7,7 @@ export const SET_USER = "SET_USER"
 export const LOGOUT = "LOGOUT"
 export const UPDATE_SECRETPATHOBJECT = "UPDATE_SECRETPATHOBJECT"
 export const UPDATE_POLICYPATHS = "UPDATE_POLICYPATHS"
+export const UPDATE_LISTPOLICIES = "UPDATE_LISTPOLICIES"
 
 export const state = () => ({
   sidebar: false,
@@ -14,7 +15,8 @@ export const state = () => ({
   vtok_expiration: 0,
   user: "",
   secretPathObject: {},
-  policyPaths: []
+  policyPaths: [],
+  listPolicies: []
 })
 
 export const mutations = {
@@ -40,6 +42,10 @@ export const mutations = {
 
   UPDATE_POLICYPATHS(state, data) {
     state.policyPaths = [...data]
+  },
+
+  UPDATE_LISTPOLICIES(state, data) {
+    state.listPolicies = [...data]
   }
 }
 
@@ -112,5 +118,9 @@ export const actions = {
 
   updatePolicyPaths({ commit }, data) {
     commit(UPDATE_POLICYPATHS, data)
+  },
+
+  updateListPolicies({ commit }, data) {
+    commit(UPDATE_LISTPOLICIES, data)
   }
 }
