@@ -8,6 +8,7 @@ export const LOGOUT = "LOGOUT"
 export const UPDATE_SECRETPATHOBJECT = "UPDATE_SECRETPATHOBJECT"
 export const UPDATE_POLICYPATHS = "UPDATE_POLICYPATHS"
 export const UPDATE_LISTPOLICIES = "UPDATE_LISTPOLICIES"
+export const UPDATE_LISTAUTHMETHODS = "UPDATE_LISTAUTHMETHODS"
 
 export const state = () => ({
   sidebar: false,
@@ -16,7 +17,8 @@ export const state = () => ({
   user: "",
   secretPathObject: {},
   policyPaths: [],
-  listPolicies: []
+  listPolicies: [],
+  listAuthMethods: []
 })
 
 export const mutations = {
@@ -46,6 +48,10 @@ export const mutations = {
 
   UPDATE_LISTPOLICIES(state, data) {
     state.listPolicies = [...data]
+  },
+
+  UPDATE_LISTAUTHMETHODS(state, data) {
+    state.listAuthMethods = [...data]
   }
 }
 
@@ -122,5 +128,9 @@ export const actions = {
 
   updateListPolicies({ commit }, data) {
     commit(UPDATE_LISTPOLICIES, data)
+  },
+
+  updateListAuthMethods({ commit }, data) {
+    commit(UPDATE_LISTAUTHMETHODS, data)
   }
 }
