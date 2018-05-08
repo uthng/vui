@@ -26,7 +26,7 @@
               <v-flex xs12>
                 <v-text-field
                   v-model="editedItem.path"
-                  :rules="[(value) => (value.match(/^[a-zA-Z0-9][a-zA-Z0-9_-]+[a-zA-Z0-9]$/) !== null) || 'The secret path must contain only: [a-zA-Z0-9_-] and must not be started or ended by - or  _']"
+                  :rules="[(value) => (value.match(/^[a-zA-Z0-9][a-zA-Z0-9_-]+[a-zA-Z0-9]$/) !== null) || 'Method path must contain only: [a-zA-Z0-9_-] and must not be started or ended by - or  _']"
                   :disabled="formFieldEnabled"
                   name="item-path"
                   label="Path:"
