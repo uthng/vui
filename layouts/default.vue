@@ -131,6 +131,16 @@ export default {
         },
         {
           action: "apps",
+          title: "Auth",
+          active: false,
+          visible: true,
+          items: [
+            { title: "Methods", visible: true, href: "/auth" },
+            { title: "LDAP", visible: true, href: "/ldap" }
+          ]
+        },
+        {
+          action: "apps",
           title: "Policies",
           active: true,
           visible: true,
