@@ -12,21 +12,38 @@
           <v-card flat>
             <v-card-text>
               <v-text-field
-                v-model="userLogin"
-                name="user-login"
+                v-model="ldap.username"
+                name="ldap-username"
                 label="Login:"
                 required
               />
               <v-text-field
-                v-model="userPass"
-                :append-icon="userVisiblePass ? 'visibility' : 'visibility_off'"
-                :append-icon-cb="() => (userVisiblePass = !userVisiblePass)"
-                :type="userVisiblePass ? 'password' : 'text'"
-                name="user-password"
+                v-model="ldap.password"
+                :append-icon="ldap.visible ? 'visibility' : 'visibility_off'"
+                :append-icon-cb="() => (ldap.visible = !ldap.visible)"
+                :type="ldap.visible ? 'password' : 'text'"
+                name="ldap-password"
                 label="Password:"
                 required
                 min="8"
               />
+              <v-expansion-panel>
+                <v-expansion-panel-content>
+                  <div slot="header" class="blue--text">More options</div>
+                  <v-card>
+                    <v-card-text>
+                      <v-text-field
+                        v-model="ldap.path"
+                        :rules="[(value) => (value.match(/^[a-zA-Z0-9][a-zA-Z0-9_-]+[a-zA-Z0-9]$/) !== null) || 'Path must contain only: [a-zA-Z0-9_-] and must not be started or ended by - or  _']"
+                        name="ldap-path"
+                        label="Path:"
+                        required
+                        min="8"
+                      />
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
               <v-card-actions>
                 <v-btn flat color="blue">Cancel</v-btn>
                 <v-btn flat color="blue" @click.stop="doLoginLdap()">Login</v-btn>
@@ -66,10 +83,13 @@ export default {
   },
   data() {
     return {
-      userLogin: "",
-      userPass: "",
+      ldap: {
+        username: "",
+        password: "",
+        path: "ldap",
+        visible: false
+      },
       vaultToken: "",
-      userVisiblePass: false,
       dlgLoading: false
     }
   },
@@ -77,14 +97,18 @@ export default {
     doLoginLdap: async function() {
       try {
         this.dlgLoading = true
-        let ret = await this.$vault.ldap.login(this.userLogin, this.userPass)
+        let ret = await this.$vault.ldap.login(
+          this.ldap.path,
+          this.ldap.username,
+          this.ldap.password
+        )
 
         this.$store.dispatch("setVtok", {
           token: ret.auth.client_token,
           ttl: ret.auth.lease_duration
         })
         this.$store.dispatch("setUser", {
-          user: this.userLogin,
+          user: this.ldap.username,
           ttl: ret.auth.lease_duration
         })
 
