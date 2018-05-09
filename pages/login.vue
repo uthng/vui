@@ -87,7 +87,7 @@ export default {
         username: "",
         password: "",
         path: "ldap",
-        visible: false
+        visible: true
       },
       vaultToken: "",
       dlgLoading: false
