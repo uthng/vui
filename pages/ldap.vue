@@ -308,6 +308,9 @@
                     <v-flex xs12>
                       <v-text-field
                         v-model="ldapConfig.bindpass"
+                        :append-icon="formLdapVisibleBindPass ? 'visibility' : 'visibility_off'"
+                        :append-icon-cb="() => (formLdapVisibleBindPass = !formLdapVisibleBindPass)"
+                        :type="formLdapVisibleBindPass ? 'password' : 'text'"
                         :disabled="!formLdapEdit"
                         name="ldap-bindpass"
                         label="Bind pass:"
@@ -448,6 +451,7 @@ export default {
       backupLdapConfig: {},
       listTls: ["tls12", "tls11", "tls10"],
       formLdapEdit: false,
+      formLdapVisibleBindPass: true,
       listLdaps: [],
       selectedLdap: ""
     }
