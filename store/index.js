@@ -9,6 +9,7 @@ export const UPDATE_SECRETPATHOBJECT = "UPDATE_SECRETPATHOBJECT"
 export const UPDATE_POLICYPATHS = "UPDATE_POLICYPATHS"
 export const UPDATE_LISTPOLICIES = "UPDATE_LISTPOLICIES"
 export const UPDATE_LISTAUTHMETHODS = "UPDATE_LISTAUTHMETHODS"
+export const UPDATE_LISTSECRETENGINES = "UPDATE_LISTSECRETENGINES"
 export const UPDATE_LDAPLISTGROUPS = "UPDATE_LDAPLISTGROUPS"
 export const UPDATE_LDAPLISTUSERS = "UPDATE_LDAPLISTUSERS"
 
@@ -21,6 +22,7 @@ export const state = () => ({
   policyPaths: [],
   listPolicies: [],
   listAuthMethods: [],
+  listSecretEngines: [],
   ldapListGroups: [],
   ldapListUsers: []
 })
@@ -56,6 +58,10 @@ export const mutations = {
 
   UPDATE_LISTAUTHMETHODS(state, data) {
     state.listAuthMethods = [...data]
+  },
+
+  UPDATE_LISTSECRETENGINES(state, data) {
+    state.listSecretEngines = [...data]
   },
 
   UPDATE_LDAPLISTGROUPS(state, data) {
@@ -144,6 +150,10 @@ export const actions = {
 
   updateListAuthMethods({ commit }, data) {
     commit(UPDATE_LISTAUTHMETHODS, data)
+  },
+
+  updateListSecretEngines({ commit }, data) {
+    commit(UPDATE_LISTSECRETENGINES, data)
   },
 
   updateLdapListGroups({ commit }, data) {
