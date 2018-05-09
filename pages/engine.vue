@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-dialog v-model="dlgEditItem" persistent max-width="700px">
-      <v-btn slot="activator" color="primary" class="mb-2" dark>New Method</v-btn>
+      <v-btn slot="activator" color="primary" class="mb-2" dark>New Engine</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
@@ -12,7 +12,7 @@
               <v-flex xs12>
                 <v-select
                   v-model="editedItem.type"
-                  :items="listAuthTypes"
+                  :items="listSecretTypes"
                   :disabled="formFieldEnabled"
                   name="item-type"
                   label="Type:"
@@ -67,7 +67,7 @@
     <v-dialog v-model="dlgDeleteItem" persistent max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">Delete Method</span>
+          <span class="headline">Delete Engine</span>
         </v-card-title>
         <v-card-text>
           Are you sure to delete the following method corresponding to the path: <b><span class="red--text text--lighten-2">{{ editedItem.path }}</span></b> ?
@@ -81,7 +81,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="methods"
+      :items="engines"
       hide-actions
       class="elevation-1 body-1"
       item-key="path"
@@ -150,6 +150,7 @@ export default {
         config: {
           default_lease_ttl: "",
           max_lease_ttl: "",
+          force_no_cache: false,
           plugin_name: "",
           audit_non_hmac_request_keys: [],
           audit_non_hmac_response_keys: [],
@@ -157,7 +158,8 @@ export default {
           passthrough_request_headers: []
         },
         plugin_name: "",
-        local: false
+        local: false,
+        seal_wrap: false
       },
       defaultItem: {
         path: "",
@@ -166,6 +168,7 @@ export default {
         config: {
           default_lease_ttl: "",
           max_lease_ttl: "",
+          force_no_cache: false,
           plugin_name: "",
           audit_non_hmac_request_keys: [],
           audit_non_hmac_response_keys: [],
@@ -173,31 +176,40 @@ export default {
           passthrough_request_headers: []
         },
         plugin_name: "",
-        local: false
+        local: false,
+        seal_wrap: false
       },
-      listAuthTypes: [
-        { type: "ldap", name: "LDAP", disabled: false },
-        { type: "token", name: "Token", disabled: false },
-        { type: "approle", name: "AppRole", disabled: false },
-        { type: "github", name: "Github", disabled: false },
-        { type: "userpass", name: "Username & password", disabled: false }
+      listSecretTypes: [
+        { type: "consul", name: "Consul", disabled: false },
+        { type: "kv", name: "Secret", disabled: false },
+        { type: "cubbyhole", name: "Cubbyhole", disabled: true },
+        { type: "aws", name: "AWS", disabled: true },
+        { type: "database", name: "Databases", disabled: true },
+        { type: "gcp", name: "Google Cloud", disabled: true },
+        { type: "identity", name: "Identity", disabled: false },
+        { type: "nomad", name: "Nomad", disabled: true },
+        { type: "pki", name: "PKI", disabled: true },
+        { type: "rabbitmq", name: "RabbitMQ", disabled: true },
+        { type: "ssh", name: "SSH", disabled: true },
+        { type: "totp", name: "TOTP", disabled: true },
+        { type: "transit", name: "Transit", disabled: true }
       ]
     }
   },
   computed: {
-    methods: function() {
-      return this.$store.state.listAuthMethods
+    engines: function() {
+      return this.$store.state.listSecretEngines
     },
     formTitle: function() {
-      return this.editedIndex === -1 ? "New Method" : "Edit Method"
+      return this.editedIndex === -1 ? "New Engine" : "Edit Engine"
     },
     formFieldEnabled: function() {
       return this.editedIndex === -1 ? false : true
     }
     // We comment this function because we can mount the same auth type
     // on different paths
-    // listAuthTypes: function() {
-    //  let methods = this.$store.state.listAuthMethods
+    // listSecretTypes: function() {
+    //  let engines = this.$store.state.listSecretEngines
     //  let authTypes = [
     //    { type: "ldap", name: "LDAP", disabled: false },
     //    { type: "token", name: "Token", disabled: false },
@@ -207,7 +219,7 @@ export default {
     //  ]
 
     //  return authTypes.map(authType => {
-    //    let m = methods.filter(method => {
+    //    let m = engines.filter(method => {
     //      return method.type === authType.type
     //    })
 
@@ -219,9 +231,9 @@ export default {
   mounted: async function() {
     try {
       this.dlgLoading = true
-      let methods = await this.$vault.auth.getMethods(this.$store.state.vtok)
+      let engines = await this.$vault.secret.getEngines(this.$store.state.vtok)
 
-      this.$store.dispatch("updateListAuthMethods", methods)
+      this.$store.dispatch("updateListSecretEngines", engines)
       this.dlgLoading = false
     } catch (err) {
       this.dlgLoading = false
@@ -231,20 +243,20 @@ export default {
   methods: {
     deleteItem: async function() {
       try {
-        let methods = _.cloneDeep(this.methods)
+        let engines = _.cloneDeep(this.engines)
 
         this.dlgLoading = true
-        await this.$vault.auth.deleteMethod(
+        await this.$vault.secret.deleteEngine(
           this.editedItem.path,
           this.$store.state.vtok
         )
 
-        methods.splice(this.editedIndex, 1)
+        engines.splice(this.editedIndex, 1)
 
-        this.$store.dispatch("updateListAuthMethods", methods)
+        this.$store.dispatch("updateListSecretEngines", engines)
         this.showMsg({
           message:
-            "The method corresponding to the path " +
+            "The engine corresponding to the path " +
             this.editedItem.path +
             " has been deleted correctly !"
         })
@@ -257,32 +269,32 @@ export default {
     },
     saveItem: async function() {
       try {
-        let methods = _.cloneDeep(this.methods)
+        let engines = _.cloneDeep(this.engines)
 
         this.dlgLoading = true
 
         if (this.editedIndex > -1) {
-          await this.$vault.auth.updateMethod(
+          await this.$vault.secret.updateEngine(
             this.editedItem,
             this.$store.state.vtok
           )
         } else {
-          await this.$vault.auth.createMethod(
+          await this.$vault.secret.createEngine(
             this.editedItem,
             this.$store.state.vtok
           )
         }
 
         if (this.editedIndex > -1) {
-          Object.assign(methods[this.editedIndex], this.editedItem)
+          Object.assign(engines[this.editedIndex], this.editedItem)
         } else {
-          methods.push(this.editedItem)
+          engines.push(this.editedItem)
         }
 
-        this.$store.dispatch("updateListAuthMethods", methods)
+        this.$store.dispatch("updateListSecretEngines", engines)
         this.showMsg({
           message:
-            "The method corresponding to the path " +
+            "The engine corresponding to the path " +
             this.editedItem.path +
             " has been saved correctly !"
         })
@@ -294,7 +306,7 @@ export default {
       }
     },
     openDlgItem: function(item, op) {
-      this.editedIndex = this.methods.indexOf(item)
+      this.editedIndex = this.engines.indexOf(item)
       this.editedItem = _.cloneDeep(item)
       if (op === "edit") {
         this.dlgEditItem = true

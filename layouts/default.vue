@@ -127,7 +127,10 @@ export default {
           title: "Secrets",
           active: false,
           visible: true,
-          items: [{ title: "Key/Value", visible: true, href: "/kv" }]
+          items: [
+            { title: "Engines", visible: true, href: "/engine" },
+            { title: "Key/Value", visible: true, href: "/kv" }
+          ]
         },
         {
           action: "apps",
