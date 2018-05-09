@@ -245,8 +245,8 @@ export default {
         this.$store.dispatch("updateListAuthMethods", methods)
         this.showMsg({
           message:
-            "The method " +
-            this.editedItem.name +
+            "The method corresponding to the path " +
+            this.editedItem.path +
             " has been deleted correctly !"
         })
 
@@ -283,7 +283,9 @@ export default {
         this.$store.dispatch("updateListAuthMethods", methods)
         this.showMsg({
           message:
-            "The method " + this.editedItem.name + " has been saved correctly !"
+            "The method corresponding to the path " +
+            this.editedItem.path +
+            " has been saved correctly !"
         })
 
         this.closeDlgItem()
@@ -294,7 +296,7 @@ export default {
     },
     openDlgItem: function(item, op) {
       this.editedIndex = this.methods.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+      this.editedItem = _.cloneDeep(item)
       if (op === "edit") {
         this.dlgEditItem = true
       } else {
