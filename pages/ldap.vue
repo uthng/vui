@@ -486,18 +486,16 @@ export default {
       })
 
       // Get all LDAP mounted methods
-      //let methods = await this.$vault.auth.getMethods(this.$store.state.vtok)
-      //this.listLdaps = methods
-      //  .filter(method => {
-      //    return method.type === "ldap"
-      //  })
-      //  .map(ldap => {
-      //    return ldap.path
-      //  })
-      //this.selectedLdap = this.listLdaps[0]
-
-      this.listLdaps = ["ldap", "toto"]
+      let methods = await this.$vault.auth.getMethods(this.$store.state.vtok)
+      this.listLdaps = methods
+        .filter(method => {
+          return method.type === "ldap"
+        })
+        .map(ldap => {
+          return ldap.path
+        })
       this.selectedLdap = this.listLdaps[0]
+
       await this.loadData()
 
       this.dlgLoading = false

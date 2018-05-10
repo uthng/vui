@@ -84,7 +84,7 @@ export default {
   name: "VaultViewItem",
   props: {
     data: {
-      type: Object,
+      type: String,
       required: true
     },
     currentDepth: {

@@ -1,5 +1,19 @@
 <template>
   <v-container fluide>
+    <v-layout row justify-center align-center>
+      <v-flex xs12>
+        <v-select
+          v-model="selectedSecret"
+          :items="listSecrets"
+          label="Secret Paths:"
+          item-text="path"
+          item-value="path"
+          item-disabled="disabled"
+          required
+          @input="loadData"
+        />
+      </v-flex>
+    </v-layout>
     <v-layout row wrap>
       <v-flex xs12>
         <vault-view :data="jsonSource" :unfold-paths="policyPaths" :options="{maxDepth: 7}" @get-secret-kv="getSecretRecurseKV"/>
@@ -23,7 +37,9 @@ export default {
   },
   data() {
     return {
-      dlgLoading: false
+      dlgLoading: false,
+      selectedSecret: "",
+      listSecrets: []
     }
   },
   computed: {
@@ -63,50 +79,67 @@ export default {
     })
 
     try {
-      let infos = await this.$vault.token.getTokenInfos(this.$store.state.vtok)
-      let i = 0
+      // Get all LDAP mounted methods
+      let engines = await this.$vault.secret.getEngines(this.$store.state.vtok)
+      this.listSecrets = engines
+        .filter(engine => {
+          return engine.type === "kv"
+        })
+        .map(secret => {
+          return { path: secret.path, disabled: true }
+        })
+      //this.selectedSecret = this.listSecrets[0].path
+
+      // If user is root, add all mounted secrets with full capabilities in
+      // policy paths. Otherwise build it by filtering with secret paths
+      // And enable all secret engine in select menu
       let arrPolicyPaths = []
+      if (this.$store.state.user === "root") {
+        arrPolicyPaths = this.listSecrets.map(secret => {
+          return {
+            path: secret.path + "/*",
+            capabilities: ["create", "update", "delete", "read", "list"]
+          }
+        })
 
-      // Just looping policies and add only keys begining with secret/
-      for (i = 0; i < infos.policies.length; i++) {
-        let path = infos.policies[i].rules.path
-        let keyWithoutGlob
-        let keyParent
-        for (var key in path) {
-          if (path.hasOwnProperty(key)) {
-            if (key.startsWith("secret/")) {
-              // Check if the key contains glob character (*) at the end.
-              // It is not a regular expression (as indicated in Vault docs)
-              if (key.endsWith("*")) {
-                keyWithoutGlob = key.replace("*", "")
-                // For the vault tree view, we can not let secret/travel/team-
-                // (because * is replaced above), so we also need to remove team-
-                let lastIdx = keyWithoutGlob.lastIndexOf("/")
-                keyParent = keyWithoutGlob.substr(0, lastIdx + 1)
-              } else {
-                keyWithoutGlob = key
-                keyParent = key
+        this.listSecrets = this.listSecrets.map(secret => {
+          secret.disabled = false
+          return secret
+        })
+      } else {
+        // Build an array of policy paths filtering with secret path
+        let infos = await this.$vault.token.getTokenInfos(
+          this.$store.state.vtok
+        )
+        let i = 0
+
+        // Just looping policies and add only keys begining with secret/
+        for (i = 0; i < infos.policies.length; i++) {
+          let path = infos.policies[i].rules.path
+          for (var key in path) {
+            if (path.hasOwnProperty(key)) {
+              for (var j = 0; j < this.listSecrets.length; j++) {
+                if (key.startsWith(this.listSecrets[j].path + "/")) {
+                  arrPolicyPaths.push({
+                    path: key,
+                    capabilities: path[key].capabilities
+                  })
+
+                  // Enable secret engine select menu because at least
+                  // one key in policy path contains it
+                  this.listSecrets[j].disabled = false
+                }
               }
-
-              // If the key or its parents are not in policy path
-              // then call it 1st time recursively
-              if (!this.checkKeyInPolicyPath(keyParent, arrPolicyPaths)) {
-                // console.log('policyPath keyParent: ' + keyParent)
-                await this.getSecretRecurseKV(keyParent)
-              }
-
-              // console.log('policyPath key: ' + key)
-              arrPolicyPaths.push({
-                path: key,
-                capabilities: path[key].capabilities
-              })
             }
           }
         }
       }
 
-      // console.log('arrPolicyPaths: ' + JSON.stringify(arrPolicyPaths))
+      //console.log("arrPolicyPaths: " + JSON.stringify(arrPolicyPaths))
       this.$store.dispatch("updatePolicyPaths", arrPolicyPaths)
+
+      // Load page's data
+      this.loadData()
 
       this.dlgLoading = false
     } catch (error) {
@@ -115,11 +148,46 @@ export default {
     }
   },
   methods: {
+    loadData: async function() {
+      // Reinitialize secret path object stored in state
+      this.$store.dispatch("updateSecretPathObject", {})
+
+      // Get only policy paths matching with selected secret path
+      let arrPolicyPaths = this.$store.state.policyPaths.filter(policy => {
+        return policy.path.startsWith(this.selectedSecret + "/")
+      })
+
+      for (var i = 0; i < arrPolicyPaths.length; i++) {
+        let key = arrPolicyPaths[i].path
+        let keyWithoutGlob
+        let keyParent
+
+        // Check if the key contains glob character (*) at the end.
+        // It is not a regular expression (as indicated in Vault docs)
+        if (key.endsWith("*")) {
+          keyWithoutGlob = key.replace("*", "")
+          // For the vault tree view, we can not let secret/travel/team-
+          // (because * is replaced above), so we also need to remove team-
+          let lastIdx = keyWithoutGlob.lastIndexOf("/")
+          keyParent = keyWithoutGlob.substr(0, lastIdx + 1)
+        } else {
+          keyWithoutGlob = key
+          keyParent = key
+        }
+
+        // Check If the key or its parents are not in policy path
+        // from 0 to current position, then call it 1st time recursively
+        if (!this.checkKeyInPolicyPath(keyParent, i, arrPolicyPaths)) {
+          // console.log('policyPath keyParent: ' + keyParent)
+          await this.getSecretRecurseKV(keyParent)
+        }
+      }
+    },
     // This function checks if a key or parent key is already
     // in the policy paths ? If yes, it means that a call recursive
     // to get all child keys has been performed
-    checkKeyInPolicyPath: function(key, paths) {
-      for (var i = 0; i < paths.length; i++) {
+    checkKeyInPolicyPath: function(key, index, paths) {
+      for (var i = 0; i < index; i++) {
         let lastIdx = paths[i].path.lastIndexOf("/")
         let path = paths[i].path.substr(0, lastIdx + 1)
         if (path.length >= key.length) {
@@ -167,7 +235,7 @@ export default {
           }
         }
 
-        // console.log('currentMapKeys after: ' + JSON.stringify(currentMapKeys))
+        //console.log("currentMapKeys after: " + JSON.stringify(currentMapKeys))
         this.$store.dispatch("updateSecretPathObject", currentMapKeys)
         this.dlgLoading = false
       } catch (error) {
