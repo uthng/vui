@@ -79,16 +79,16 @@ export const actions = {
       // Get back cookie vtok  & user and set them to states
       let cookies = cookie.parse(context.req.headers.cookie || "")
       // console.log('cookie header ' + JSON.stringify(cookies))
-      if (cookies.hasOwnProperty("iui_vtok")) {
-        commit(SET_VTOK, cookies.iui_vtok)
+      if (cookies.hasOwnProperty("vui_vtok")) {
+        commit(SET_VTOK, cookies.vui_vtok)
       }
 
-      if (cookies.hasOwnProperty("iui_vtok_expiration")) {
-        commit(SET_VTOK_EXPIRATION, cookies.iui_vtok_expiration)
+      if (cookies.hasOwnProperty("vui_vtok_expiration")) {
+        commit(SET_VTOK_EXPIRATION, cookies.vui_vtok_expiration)
       }
 
-      if (cookies.hasOwnProperty("iui_user")) {
-        commit(SET_USER, cookies.iui_user)
+      if (cookies.hasOwnProperty("vui_user")) {
+        commit(SET_USER, cookies.vui_user)
       }
 
       resolve(true)
@@ -101,11 +101,11 @@ export const actions = {
     var ttl = inFifteenMinutes
 
     if (data.ttl > 0) {
-      ttl = new Date(new Date().getTime() + ttl * 1000)
+      ttl = new Date(new Date().getTime() + data.ttl * 1000)
     }
 
-    jsCookie.set("iui_vtok", data.token, { expires: ttl, secure: false })
-    jsCookie.set("iui_vtok_expiration", ttl.getTime(), {
+    jsCookie.set("vui_vtok", data.token, { expires: ttl, secure: false })
+    jsCookie.set("vui_vtok_expiration", ttl.getTime(), {
       expires: ttl,
       secure: false
     })
@@ -119,17 +119,17 @@ export const actions = {
     var ttl = inFifteenMinutes
 
     if (data.ttl > 0) {
-      ttl = new Date(new Date().getTime() + ttl * 1000)
+      ttl = new Date(new Date().getTime() + data.ttl * 1000)
     }
 
-    jsCookie.set("iui_user", data.user, { expires: ttl, secure: false })
+    jsCookie.set("vui_user", data.user, { expires: ttl, secure: false })
     commit(SET_USER, data.user)
   },
 
   logout({ commit }) {
-    jsCookie.remove("iui_vtok")
-    jsCookie.remove("iui_vtok_expiration")
-    jsCookie.remove("iui_user")
+    jsCookie.remove("vui_vtok")
+    jsCookie.remove("vui_vtok_expiration")
+    jsCookie.remove("vui_user")
 
     commit(SET_VTOK, "")
     commit(SET_VTOK_EXPIRATION, 0)
