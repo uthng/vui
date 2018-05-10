@@ -183,7 +183,7 @@ export default {
       for (var i = 0; i < this.unfoldPaths.length; i++) {
         let unfoldPath = this.unfoldPaths[i]
         if (unfoldPath.path == this.path) {
-          // console.log('path =: ' + this.path + ' capabilities ' + unfoldPath.capabilities)
+          //console.log('path =: ' + this.path + ' capabilities ' + unfoldPath.capabilities)
           return unfoldPath.capabilities
           // }
           // else if (unfoldPath.path.length > this.path.length) {
@@ -200,13 +200,18 @@ export default {
             unfoldPath.path.endsWith("*") &&
             this.path.startsWith(unfoldPath.path.replace("*", ""))
           ) {
-            // console.log('path >: ' + this.path + ' capabilities ' + unfoldPath.capabilities)
+            //console.log(
+            //  "path >: " +
+            //    this.path +
+            //    " capabilities " +
+            //    unfoldPath.capabilities
+            //)
             capabilities = unfoldPath.capabilities
           }
         }
       }
 
-      //console.log('path final: ' + this.path + ' capabilities ' + capabilities)
+      //console.log("path final: " + this.path + " capabilities " + capabilities)
       return capabilities
     },
     isBtnDisabled: function(btnName) {
@@ -257,6 +262,9 @@ export default {
     getChildType: function(data) {
       //console.log('pathhhhhhhhhhhhhhhh ' + data.key + ' children ' + JSON.stringify(data.children))
       if (this.isObject(data) || this.isArray(data)) {
+        if (data.children.length == 0) {
+          return "empty"
+        }
         for (var i = 0; i < data.children.length; i++) {
           let child = data.children[i]
           //console.log('childddddddddd ' + JSON.stringify(child))
