@@ -1,6 +1,7 @@
 # VUI: Vault UI
 Another Web UI written in VueJS & NuxtJS to manage Vault easily. It uses directly Vault HTTP API and still under heavy development.
 
+![VUI Demo](./docs/images/vui_demo.gif)
 
 ## Current features:
 - User authentication with multiple path support for the same method: token and LDAP
@@ -40,9 +41,13 @@ To run VUI using the Docker image:
 docker run -d --name vui -e VAULT_API_URL=http://vault_api_url:8200/v1 -p 4000:3000 uthng/vui:0.2.0
 ```
 
+** Environment variables: **
+- VAULT_API_URL: Vault endpoint with version
+
+
 ## Configuration:
 
-### VUI configuration:
+### VUI:
 
 To run and to communicate with Vault, VUI loads the configuration file `config.js` in which the following informations need to be specified:
 
@@ -52,9 +57,9 @@ export const VAULT_API_URL = "http://vault_api_url:8200/v1"
 
 This configuration file will be generated automatically if you are using the Docker image.
 
-### Vault configuration:
+### Vault:
 
-##### 1. CORS configuration:
+##### 1. CORS:
 
 VUI communicates directly with Vault HTTP API, so in order to avoid CORS issues, the following configuration needs to be set first at Vault servers:
 
