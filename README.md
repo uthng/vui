@@ -84,7 +84,7 @@ VUI communicates directly with Vault HTTP API, so in order to avoid CORS issues,
 
 When using VUI, a user or a token needs to have a basic set of capabilities in order to: read/renew/revoke token itself, discover mounted secret engines and read somes policies.
 
-  ** 1. Default policy **
+  **1. Default policy**
 
 A basic default policy for all users.
 
@@ -122,7 +122,7 @@ path "sys/mounts" {
 
 ```
 
-  ** 2. Secret policy **
+  **2. Secret policy**
 
 Besides the permissions to secret paths, user must have at least a read capability on the policy to which he is granted. For example:
 
