@@ -1,6 +1,6 @@
 <template>
-  <v-container fluide>
-    <v-layout row justify-center align-center>
+  <v-container grid-list-xl>
+    <v-layout row wrap>
       <v-flex xs12>
         <v-select
           v-model="selectedSecret"
@@ -16,6 +16,11 @@
     </v-layout>
     <v-layout row wrap>
       <v-flex xs12>
+        <v-switch
+          :label="`${folded === true ? 'Folded' : 'Unfolded' }`"
+          v-model="folded"
+          @change="onSwitchChange"
+        />
         <vault-view :data="jsonSource" :unfold-paths="policyPaths" :options="{maxDepth: 7}" @get-secret-kv="getSecretRecurseKV"/>
       </v-flex>
     </v-layout>
@@ -39,7 +44,8 @@ export default {
     return {
       dlgLoading: false,
       selectedSecret: "",
-      listSecrets: []
+      listSecrets: [],
+      folded: true
     }
   },
   computed: {
@@ -410,6 +416,9 @@ export default {
       } catch (error) {
         this.showMsg({ type: "error", message: error })
       }
+    },
+    onSwitchChange: function() {
+      this.$root.$emit("fold-event", this.folded)
     }
   },
   notifications: {
