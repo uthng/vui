@@ -4,8 +4,8 @@ MAINTAINER Thanh NGUYEN <u.nguyenthanh@gmail.com>
 ENV VAULT_API_URL "http://localhost:8200/v1"
 
 RUN mkdir -p /vui
-COPY . /app
-WORKDIR /app
+COPY . /vui
+WORKDIR /vui
 
 RUN npm install
 RUN npm run build
