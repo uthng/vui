@@ -11,11 +11,17 @@ Another Web UI written in VueJS & NuxtJS to manage Vault easily. It uses directl
     - Ldap server configuration
     - Groups & users management with policies (create, delete, modify)
     - Multiple LDAP paths
+  - User & password:
+    - User management with policies (create, delete, modify)
 - Secret engines:
   - Engines: enable, disable and configure current supported engines
   - Secret (Key/Value) v1:
     - Secret treeview editor with access and actions based on user's policies
     - Multiple Secret paths
+  - Consul:
+    - Configuration management
+    - Role management
+    - Multiple Consul paths
 - Policies: full management (create, delete, modifiy)
 
 ## Build Setup:
