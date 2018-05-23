@@ -129,7 +129,8 @@ export default {
           visible: true,
           items: [
             { title: "Engines", visible: true, href: "/engine" },
-            { title: "Key/Value", visible: true, href: "/kv" }
+            { title: "Key/Value", visible: true, href: "/kv" },
+            { title: "Consul", visible: true, href: "/consul" }
           ]
         },
         {
