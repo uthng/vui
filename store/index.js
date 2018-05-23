@@ -13,6 +13,7 @@ export const UPDATE_LISTSECRETENGINES = "UPDATE_LISTSECRETENGINES"
 export const UPDATE_LDAPLISTGROUPS = "UPDATE_LDAPLISTGROUPS"
 export const UPDATE_LDAPLISTUSERS = "UPDATE_LDAPLISTUSERS"
 export const UPDATE_CONSULLISTROLES = "UPDATE_CONSULLISTROLES"
+export const UPDATE_USERPASSLISTUSERS = "UPDATE_USERPASSLISTUSERS"
 
 export const state = () => ({
   sidebar: false,
@@ -26,7 +27,8 @@ export const state = () => ({
   listSecretEngines: [],
   ldapListGroups: [],
   ldapListUsers: [],
-  consulListRoles: []
+  consulListRoles: [],
+  userpassListUsers: []
 })
 
 export const mutations = {
@@ -76,6 +78,10 @@ export const mutations = {
 
   UPDATE_CONSULLISTROLES(state, data) {
     state.consulListRoles = [...data]
+  },
+
+  UPDATE_USERPASSLISTUSERS(state, data) {
+    state.userpassListUsers = [...data]
   }
 }
 
@@ -172,5 +178,9 @@ export const actions = {
 
   updateConsulListRoles({ commit }, data) {
     commit(UPDATE_CONSULLISTROLES, data)
+  },
+
+  updateUserpassListUsers({ commit }, data) {
+    commit(UPDATE_USERPASSLISTUSERS, data)
   }
 }

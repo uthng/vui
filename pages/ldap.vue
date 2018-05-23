@@ -494,9 +494,17 @@ export default {
         .map(ldap => {
           return ldap.path
         })
-      this.selectedLdap = this.listLdaps[0]
 
-      await this.loadData()
+      if (this.listLdaps.length > 0) {
+        this.selectedLdap = this.listLdaps[0]
+
+        await this.loadData()
+      } else {
+        this.showMsg({
+          type: "error",
+          message: "No LDAP auth backend is enabled !"
+        })
+      }
 
       this.dlgLoading = false
     } catch (err) {

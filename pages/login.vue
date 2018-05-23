@@ -8,6 +8,7 @@
         <v-tabs-slider color="grey lighten-1"/>
         <v-tab>LDAP</v-tab>
         <v-tab>TOKEN</v-tab>
+        <v-tab>User & Password</v-tab>
         <v-tab-item>
           <v-card flat>
             <v-card-text>
@@ -67,6 +68,49 @@
             </v-card-actions>
           </v-card>
         </v-tab-item>
+        <v-tab-item>
+          <v-card flat>
+            <v-card-text>
+              <v-text-field
+                v-model="userpass.username"
+                name="userpass-username"
+                label="Login:"
+                required
+              />
+              <v-text-field
+                v-model="userpass.password"
+                :append-icon="userpass.visible ? 'visibility' : 'visibility_off'"
+                :append-icon-cb="() => (userpass.visible = !userpass.visible)"
+                :type="userpass.visible ? 'password' : 'text'"
+                name="userpass-password"
+                label="Password:"
+                required
+                min="8"
+              />
+              <v-expansion-panel>
+                <v-expansion-panel-content>
+                  <div slot="header" class="blue--text">More options</div>
+                  <v-card>
+                    <v-card-text>
+                      <v-text-field
+                        v-model="userpass.path"
+                        :rules="[(value) => (value.match(/^[a-zA-Z0-9][a-zA-Z0-9_-]+[a-zA-Z0-9]$/) !== null) || 'Path must contain only: [a-zA-Z0-9_-] and must not be started or ended by - or  _']"
+                        name="userpass-path"
+                        label="Path:"
+                        required
+                      />
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-card-actions>
+                <v-btn flat color="blue">Cancel</v-btn>
+                <v-btn flat color="blue" @click.stop="doLoginUserpass()">Login</v-btn>
+              </v-card-actions>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+
       </v-tabs>
     </v-flex>
     <loader v-model="dlgLoading"/>
@@ -90,7 +134,13 @@ export default {
         visible: true
       },
       vaultToken: "",
-      dlgLoading: false
+      dlgLoading: false,
+      userpass: {
+        username: "",
+        password: "",
+        path: "userpass",
+        visible: true
+      }
     }
   },
   methods: {
@@ -139,6 +189,32 @@ export default {
         }
 
         this.showMsg({ message: "Your token has been saved correctly !" })
+        this.$router.push("/")
+        this.dlogLoading = false
+      } catch (error) {
+        this.showMsg({ type: "error", message: error })
+        this.dlgLoading = false
+      }
+    },
+    doLoginUserpass: async function() {
+      try {
+        this.dlgLoading = true
+        let ret = await this.$vault.userpass.login(
+          this.userpass.path,
+          this.userpass.username,
+          this.userpass.password
+        )
+
+        this.$store.dispatch("setVtok", {
+          token: ret.auth.client_token,
+          ttl: ret.auth.lease_duration
+        })
+        this.$store.dispatch("setUser", {
+          user: this.userpass.username,
+          ttl: ret.auth.lease_duration
+        })
+
+        this.showMsg({ message: "You are successfully logged in !" })
         this.$router.push("/")
         this.dlogLoading = false
       } catch (error) {

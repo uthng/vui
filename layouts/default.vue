@@ -140,7 +140,8 @@ export default {
           visible: true,
           items: [
             { title: "Methods", visible: true, href: "/auth" },
-            { title: "LDAP", visible: true, href: "/ldap" }
+            { title: "LDAP", visible: true, href: "/ldap" },
+            { title: "Userpass", visible: true, href: "/userpass" }
           ]
         },
         {
