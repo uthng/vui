@@ -132,8 +132,8 @@ export default {
   },
   data: function() {
     return {
-      open: this.currentDepth < this.maxDepth,
-      // open: false,
+      //open: this.currentDepth < this.maxDepth,
+      open: this.currentDepth <= 3,
       dlgDeleteSecret: false,
       dlgCreateSecret: false,
       newSecret: { parent: this.path, path: "", key: "", value: "" }
@@ -153,6 +153,14 @@ export default {
     capabilities() {
       return this.getPathCapabilities()
     }
+  },
+  mounted: function() {
+    this.$root.$on("fold-event", () => {
+      // Fold/unfold only if it is not root
+      if (this.path !== "" && this.currentDepth > 3) {
+        this.toggleOpen()
+      }
+    })
   },
   methods: {
     isOpen: function() {
@@ -353,6 +361,10 @@ export default {
   font-size: 14px;
   /*margin-left: 15px;*/
   padding: 5px;
+}
+
+.item:hover {
+  background-color: #424242;
 }
 
 .item-node {
