@@ -1,6 +1,8 @@
 # VUI: Vault UI
 Another Web UI written in VueJS & NuxtJS to manage Vault easily. It uses directly Vault HTTP API and still under heavy development.
 
+Current version: 0.3.0
+
 ![VUI Demo](./docs/images/vui_demo.gif)
 
 ## Current features:
