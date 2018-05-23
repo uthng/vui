@@ -361,7 +361,6 @@ export default {
         "/",
         path + "/" + deletedPath.key
       )
-      console.log(currentMapKeys)
 
       // Get newValue to update to Vault
       let newValue = object.getObjectValueByPath(currentMapKeys, "/", path)
