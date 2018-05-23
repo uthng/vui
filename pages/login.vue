@@ -56,7 +56,10 @@
           <v-card>
             <v-card-text>
               <v-text-field
-                v-model="vaultToken"
+                v-model="vault.token"
+                :append-icon="vault.visible ? 'visibility' : 'visibility_off'"
+                :append-icon-cb="() => (vault.visible = !vault.visible)"
+                :type="vault.visible ? 'password' : 'text'"
                 name="vault-token"
                 label="Vault Token:"
                 required
@@ -133,7 +136,10 @@ export default {
         path: "ldap",
         visible: true
       },
-      vaultToken: "",
+      vault: {
+        token: "",
+        visible: true
+      },
       dlgLoading: false,
       userpass: {
         username: "",
@@ -174,9 +180,9 @@ export default {
       try {
         this.dlgLoading = true
         // Call get token to verify if it is token root or special ones
-        let infos = await this.$vault.token.lookupSelf(this.vaultToken)
+        let infos = await this.$vault.token.lookupSelf(this.vault.token)
         this.$store.dispatch("setVtok", {
-          token: this.vaultToken,
+          token: this.vault.token,
           ttl: infos.data.creation_ttl
         })
         if (!_.isNil(infos.data)) {
