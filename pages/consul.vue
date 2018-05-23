@@ -7,7 +7,7 @@
           :items="listConsuls"
           label="CONSUL Paths:"
           required
-          @change="loadData"
+          @input="loadData"
         />
       </v-flex>
     </v-layout>
@@ -280,6 +280,7 @@ export default {
   },
   methods: {
     loadData: async function() {
+      this.dlgLoading = true
       let roles = []
       roles = await this.$vault.consul.getRoles(
         this.selectedConsul,
@@ -293,6 +294,7 @@ export default {
       this.backupConsulConfig = Object.assign({}, this.consulConfig)
 
       this.$store.dispatch("updateConsulListRoles", roles)
+      this.dlgLoading = false
     },
     deleteRole: async function() {
       try {

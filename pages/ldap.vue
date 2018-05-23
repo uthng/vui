@@ -7,7 +7,7 @@
           :items="listLdaps"
           label="LDAP Paths:"
           required
-          @change="loadData"
+          @input="loadData"
         />
       </v-flex>
     </v-layout>
@@ -514,6 +514,7 @@ export default {
   },
   methods: {
     loadData: async function() {
+      this.dlgLoading = true
       let groups = await this.$vault.ldap.getGroups(
         this.selectedLdap,
         this.$store.state.vtok
@@ -535,6 +536,7 @@ export default {
 
       this.$store.dispatch("updateLdapListGroups", groups)
       this.$store.dispatch("updateLdapListUsers", users)
+      this.dlgLoading = false
     },
     deleteGroup: async function() {
       try {

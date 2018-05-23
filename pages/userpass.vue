@@ -7,7 +7,7 @@
           :items="listUserpass"
           label="USERPASS Paths:"
           required
-          @change="loadData"
+          @input="loadData"
         />
       </v-flex>
     </v-layout>
@@ -215,6 +215,7 @@ export default {
   },
   methods: {
     loadData: async function() {
+      this.dlgLoading = true
       let users = await this.$vault.userpass.getUsers(
         this.selectedUserpass,
         this.$store.state.vtok
@@ -225,6 +226,7 @@ export default {
       )
 
       this.$store.dispatch("updateUserpassListUsers", users)
+      this.dlgLoading = false
     },
     deleteUser: async function() {
       try {
